@@ -98,7 +98,6 @@ function App() {
         setMediaBlobUrl(url);
         setStatus("Recording stopped");
 
-        // Call the upload function here
         await uploadToGoogleDrive(blob);
       };
 
@@ -124,7 +123,7 @@ function App() {
       const metadata = {
         name: `Recording-${Date.now()}.webm`,
         mimeType: "video/webm",
-        parents: ["https://drive.google.com/drive/folders/1lTtaHPpuHfTAashopX4gkf20ZgrhPRuf"], //  drive folder ID
+        parents: ["1lTtaHPpuHfTAashopX4gkf20ZgrhPRuf"], 
       };
 
       const form = new FormData();
@@ -157,21 +156,7 @@ function App() {
   
   return (
     <>
-    {/* <div >
-      <h1>Screen and Webcam Recorder</h1>
-      <p>Status: {status}</p>
-      <button onClick={startRecording}>Start Recording</button>
-      <button onClick={stopRecording}>Stop Recording</button>
-      {mediaBlobUrl && (
-        <video
-          src={mediaBlobUrl}
-          controls
-          autoPlay
-          loop
-          style={{ width: "100%" }}
-        ></video>
-      )}
-    </div> */}
+    
 
 
 <div>
