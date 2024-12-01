@@ -157,7 +157,7 @@ function App() {
       <h1>Screen and Webcam Recorder</h1>
       <p>Status: {status}</p>
       <button onClick={startRecording} disabled={status === "Recording..."}>
-        Start Recording
+        Start new Recording
       </button>
       <button onClick={stopRecording} disabled={status !== "Recording..."}>
         Stop Recording
