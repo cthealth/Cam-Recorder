@@ -5,6 +5,7 @@ function App() {
   const [mediaBlobUrl, setMediaBlobUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
   const combinedStreamRef = useRef(null);
+  const tokenClientRef = useRef(null); // <-- Add this line
   const [accessToken, setAccessToken] = useState(null);
 
   const initializeTokenClient = () => {
@@ -30,7 +31,7 @@ function App() {
 
   useEffect(() => {
     const tokenClient = initializeTokenClient();
-    tokenClientRef.current = tokenClient;
+    tokenClientRef.current = tokenClient; // <-- Store the token client
   }, []);
 
   const startRecording = async () => {
