@@ -1,30 +1,40 @@
 import React, { useEffect, useRef, useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import jwt_decode from "jwt-decode";
+
 
 function App() {
   const [status, setStatus] = useState("Idle");
   const [mediaBlobUrl, setMediaBlobUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
   const combinedStreamRef = useRef(null);
-  const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
-    const initializeGoogleAuth = () => {
-      window.google.accounts.oauth2.initTokenClient({
-        client_id: "307813090600-kldsd3d345j4vgm07t1tsruoujfeqa6u.apps.googleusercontent.com",
-        scope: "https://www.googleapis.com/auth/drive.file",
-        callback: (response) => {
-          if (response.access_token) {
-            setAccessToken(response.access_token);
-            console.log("Access Token:", response.access_token);
-          } else {
-            console.error("Failed to retrieve access token:", response);
-          }
-        },
-      });
+    const loadGapi = async () => {
+      try {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = "https://apis.google.com/js/api.js";
+          script.onload = resolve;
+          script.onerror = reject;
+          document.body.appendChild(script);
+        }); 
+        window.gapi.load("client:auth2", async () => {
+          await window.gapi.client.init({
+            apiKey: "AIzaSyADXYXB2Z7tCrlsZpSU5OlBTbJvZU9K_b0",
+            clientId: "307813090600-kldsd3d345j4vgm07t1tsruoujfeqa6u.apps.googleusercontent.com",
+            scope: "https://www.googleapis.com/auth/drive.file",
+          });
+        });
+      } catch (error) {
+        console.error("Error loading gapi:", error);
+      }
     };
 
-    initializeGoogleAuth();
+    loadGapi();
   }, []);
+
+
 
   const startRecording = async () => {
     try {
@@ -87,11 +97,7 @@ function App() {
         setMediaBlobUrl(url);
         setStatus("Recording stopped");
 
-        if (accessToken) {
-          await uploadToGoogleDrive(blob);
-        } else {
-          console.error("Access token not available. Please authenticate.");
-        }
+        await uploadToGoogleDrive(blob);
       };
 
       mediaRecorder.start();
@@ -108,12 +114,17 @@ function App() {
     combinedStreamRef.current?.getTracks().forEach((track) => track.stop());
   };
 
+
+
+
   const uploadToGoogleDrive = async (blob) => {
     try {
+      const token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+
       const metadata = {
         name: `Recording-${Date.now()}.webm`,
         mimeType: "video/webm",
-        parents: ["1lTtaHPpuHfTAashopX4gkf20ZgrhPRuf"], // Replace with your folder ID
+        parents: ["1lTtaHPpuHfTAashopX4gkf20ZgrhPRuf"], 
       };
 
       const form = new FormData();
@@ -127,7 +138,7 @@ function App() {
         "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: { Authorization: `Bearer ${token}` },
           body: form,
         }
       );
@@ -135,8 +146,7 @@ function App() {
       if (response.ok) {
         alert("Recording uploaded successfully!");
       } else {
-        const errorData = await response.json();
-        console.error("Upload failed:", errorData);
+        console.error("Upload failed:", await response.json());
         alert("Failed to upload recording.");
       }
     } catch (error) {
@@ -144,9 +154,13 @@ function App() {
       alert("Error uploading file.");
     }
   };
-
+  
   return (
-    <div>
+    <>
+    
+
+
+<div>
       <h1>Screen and Webcam Recorder</h1>
       <p>Status: {status}</p>
       <button onClick={startRecording}>Start Recording</button>
@@ -161,7 +175,8 @@ function App() {
         ></video>
       )}
     </div>
-  );
+    </>
+  )
 }
 
-export default App;
+export default App
