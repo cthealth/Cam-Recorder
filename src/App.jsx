@@ -149,7 +149,7 @@ function App() {
     <div>
       <h1>Screen and Webcam Recorder</h1>
       <p>Status: {status}</p>
-      <button onClick={startRecording}>Start Recording</button>
+      <button onClick={startRecording}>Start new Recording</button>
       <button onClick={stopRecording}>Stop Recording</button>
       {mediaBlobUrl && (
         <video
