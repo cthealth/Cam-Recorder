@@ -7,23 +7,30 @@ function App() {
   const combinedStreamRef = useRef(null);
   const [accessToken, setAccessToken] = useState(null);
 
-  useEffect(() => {
-    const initializeGoogleAuth = () => {
-      window.google.accounts.oauth2.initTokenClient({
-        client_id: "307813090600-kldsd3d345j4vgm07t1tsruoujfeqa6u.apps.googleusercontent.com",
-        scope: "https://www.googleapis.com/auth/drive.file",
-        callback: (response) => {
-          if (response.access_token) {
-            setAccessToken(response.access_token);
-            console.log("Access Token:", response.access_token);
-          } else {
-            console.error("Failed to retrieve access token:", response);
-          }
-        },
-      });
-    };
+  const initializeTokenClient = () => {
+    if (!window.google || !window.google.accounts) {
+      console.error("Google Identity Services library not loaded.");
+      return;
+    }
 
-    initializeGoogleAuth();
+    return window.google.accounts.oauth2.initTokenClient({
+      client_id:
+        "307813090600-kldsd3d345j4vgm07t1tsruoujfeqa6u.apps.googleusercontent.com",
+      scope: "https://www.googleapis.com/auth/drive.file",
+      callback: (response) => {
+        if (response.access_token) {
+          setAccessToken(response.access_token);
+          console.log("Access Token:", response.access_token);
+        } else {
+          console.error("Failed to retrieve access token:", response);
+        }
+      },
+    });
+  };
+
+  useEffect(() => {
+    const tokenClient = initializeTokenClient();
+    tokenClientRef.current = tokenClient;
   }, []);
 
   const startRecording = async () => {
@@ -149,8 +156,12 @@ function App() {
     <div>
       <h1>Screen and Webcam Recorder</h1>
       <p>Status: {status}</p>
-      <button onClick={startRecording}>Start new Recording</button>
-      <button onClick={stopRecording}>Stop Recording</button>
+      <button onClick={startRecording} disabled={status === "Recording..."}>
+        Start Recording
+      </button>
+      <button onClick={stopRecording} disabled={status !== "Recording..."}>
+        Stop Recording
+      </button>
       {mediaBlobUrl && (
         <video
           src={mediaBlobUrl}
