@@ -155,24 +155,24 @@ function App() {
 
   return (
     <div>
-      <h1>Screen and Webcam Recorder</h1>
-      <p>Status: {status}</p>
-      <button onClick={startRecording} disabled={status === "Recording..."}>
-        Start new Recording
-      </button>
-      <button onClick={stopRecording} disabled={status !== "Recording..."}>
-        Stop Recording
-      </button>
-      {mediaBlobUrl && (
-        <video
-          src={mediaBlobUrl}
-          controls
-          autoPlay
-          loop
-          style={{ width: "100%" }}
-        ></video>
-      )}
-    </div>
+    <h1>Screen and Webcam Recorder</h1>
+    <p>Status: {status}</p>
+    <button onClick={startRecording} disabled={status === "Recording..."}>
+      Start new Recording
+    </button>
+    <button onClick={stopRecording} disabled={status !== "Recording..."}>
+      Stop Recording
+    </button>
+    {mediaBlobUrl && (
+      <video
+        src={mediaBlobUrl}
+        controls
+        autoPlay
+        loop
+        style={{ width: "100%" }}
+      ></video>
+    )}
+  </div>
   );
 }
 
