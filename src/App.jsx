@@ -122,7 +122,7 @@ function App() {
       const metadata = {
         name: `Recording-${Date.now()}.webm`,
         mimeType: "video/webm",
-        parents: ["YOUR_FOLDER_ID"], // Replace with your Google Drive folder ID
+        parents: ["1lTtaHPpuHfTAashopX4gkf20ZgrhPRuf"], 
       };
 
       const form = new FormData();
