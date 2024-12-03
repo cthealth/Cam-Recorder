@@ -161,7 +161,7 @@ function App() {
       Start new Recording
     </button>
     <button onClick={stopRecording} disabled={status !== "Recording..."}>
-      Stop Recording
+      Stop the Recording
     </button>
     {mediaBlobUrl && (
       <video
