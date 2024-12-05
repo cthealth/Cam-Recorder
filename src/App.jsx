@@ -124,14 +124,14 @@ function App() {
         mimeType: "video/webm",
         parents: ["1lTtaHPpuHfTAashopX4gkf20ZgrhPRuf"], 
       };
-
+  
       const form = new FormData();
       form.append(
         "metadata",
         new Blob([JSON.stringify(metadata)], { type: "application/json" })
       );
       form.append("file", blob);
-
+  
       const response = await fetch(
         "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
         {
@@ -140,17 +140,19 @@ function App() {
           body: form,
         }
       );
-
-      if (response.ok) {
-        alert("Recording uploaded successfully!");
-      } else {
-        const errorData = await response.json();
-        console.error("Upload failed:", errorData);
-        alert("Failed to upload recording.");
+  
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("Upload failed:", error);
+        alert(`Upload failed: ${error.error.message}`);
+        return;
       }
+  
+      alert("Recording uploaded successfully!");
+      console.log(await response.json());
     } catch (error) {
       console.error("Error uploading file:", error);
-      alert("Error uploading file.");
+      alert("Error uploading file. Check console for details.");
     }
   };
 
